@@ -1,0 +1,7 @@
+# no files without extensions 
+*
+!/**/
+!*.*
+
+# no inputs
+*input*
