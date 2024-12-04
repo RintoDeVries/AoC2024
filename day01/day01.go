@@ -86,16 +86,14 @@ func findDistancePart2(leftList []int, rightList []int) int {
 func run(path string) {
 	lines, err := readLines(path)
 	if err != nil {
-		fmt.Println("Err = ", err)
-		return
+		panic(err)
 	}
 
 	leftList, rightList := make([]int, len(lines)), make([]int, len(lines))
 	for index, line := range lines {
 		leftNum, rightNum, err := lineToNums(line)
 		if err != nil {
-			fmt.Println("Err = ", err)
-			return
+			panic(err)
 		}
 		leftList[index] = leftNum
 		rightList[index] = rightNum
