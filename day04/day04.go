@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func searchLeft(input [][]rune, target []rune, row int, col int) bool {
+func searchLeft(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row][col-i] != target[i] {
 			return false
@@ -15,7 +15,7 @@ func searchLeft(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchRight(input [][]rune, target []rune, row int, col int) bool {
+func searchRight(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row][col+i] != target[i] {
 			return false
@@ -24,7 +24,7 @@ func searchRight(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchUp(input [][]rune, target []rune, row int, col int) bool {
+func searchUp(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row-i][col] != target[i] {
 			return false
@@ -33,7 +33,7 @@ func searchUp(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchDown(input [][]rune, target []rune, row int, col int) bool {
+func searchDown(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row+i][col] != target[i] {
 			return false
@@ -42,7 +42,7 @@ func searchDown(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchTopLeft(input [][]rune, target []rune, row int, col int) bool {
+func searchTopLeft(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row-i][col-i] != target[i] {
 			return false
@@ -51,7 +51,7 @@ func searchTopLeft(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchTopRight(input [][]rune, target []rune, row int, col int) bool {
+func searchTopRight(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row-i][col+i] != target[i] {
 			return false
@@ -60,7 +60,7 @@ func searchTopRight(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchBottomLeft(input [][]rune, target []rune, row int, col int) bool {
+func searchBottomLeft(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row+i][col-i] != target[i] {
 			return false
@@ -69,7 +69,7 @@ func searchBottomLeft(input [][]rune, target []rune, row int, col int) bool {
 	return true
 }
 
-func searchBottomRight(input [][]rune, target []rune, row int, col int) bool {
+func searchBottomRight(input [][]byte, target []byte, row int, col int) bool {
 	for i := 0; i < len(target); i++ {
 		if input[row+i][col+i] != target[i] {
 			return false
@@ -85,7 +85,7 @@ func boolToInt(b bool) int {
 	return 0
 }
 
-func search(input [][]rune, target []rune, row int, col int) int {
+func search(input [][]byte, target []byte, row int, col int) int {
 	return boolToInt(searchLeft(input, target, row, col)) +
 		boolToInt(searchRight(input, target, row, col)) +
 		boolToInt(searchUp(input, target, row, col)) +
@@ -96,30 +96,30 @@ func search(input [][]rune, target []rune, row int, col int) int {
 		boolToInt(searchBottomRight(input, target, row, col))
 }
 
-func parseInput(path string) ([][]rune, error) {
+func parseInput(path string) ([][]byte, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	var result [][]rune
+	var result [][]byte
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		runes := []rune(scanner.Text())
-		result = append(result, runes)
+		line := append([]byte(nil), scanner.Bytes()...) // What the hell go... this is a very nasty bug...
+		result = append(result, line)
 	}
 
 	return result, nil
 }
 
-func addPaddingToMatrix(unpadded [][]rune, padding int) [][]rune {
+func addPaddingToMatrix(unpadded [][]byte, padding int) [][]byte {
 	numRows := len(unpadded) + 2*padding
 	numCols := len(unpadded[0]) + 2*padding
 
-	result := make([][]rune, numRows)
+	result := make([][]byte, numRows)
 	for i := range result {
-		result[i] = make([]rune, numCols)
+		result[i] = make([]byte, numCols)
 	}
 
 	for i := range unpadded {
@@ -135,7 +135,7 @@ func part1(path string) int {
 		panic(err)
 	}
 
-	target := []rune("XMAS")
+	target := []byte("XMAS")
 	padding := len(target)
 	padded := addPaddingToMatrix(unpadded, padding)
 	sum := 0
