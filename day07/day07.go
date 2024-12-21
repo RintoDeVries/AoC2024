@@ -9,7 +9,7 @@ import (
 )
 
 type equation struct {
-	testValue int64
+	testValue int
 	nums      []int
 }
 
@@ -19,7 +19,7 @@ func parseLine(line string) (equation, error) {
 		return equation{}, fmt.Errorf("invalid line format, expected 'testValue: nums'")
 	}
 
-	testValue, err := strconv.ParseInt(strings.TrimSpace(testValueAndNumbers[0]), 10, 64)
+	testValue, err := strconv.Atoi(strings.TrimSpace(testValueAndNumbers[0]))
 	if err != nil {
 		return equation{}, fmt.Errorf("invalid test value: %v", err)
 	}
@@ -36,7 +36,7 @@ func parseLine(line string) (equation, error) {
 	}
 
 	return equation{
-		testValue: int64(testValue),
+		testValue: testValue,
 		nums:      nums,
 	}, nil
 }
@@ -61,10 +61,10 @@ func parseInput(filepath string) ([]equation, error) {
 	return equations, nil
 }
 
-func productOfSlice(nums []int) int64 {
-	product := int64(1)
+func productOfSlice(nums []int) int {
+	product := 1
 	for _, num := range nums {
-		product *= int64(num)
+		product *= num
 	}
 	return product
 }
@@ -73,20 +73,20 @@ func isPossiblePt1(eq equation) bool {
 	numPlaces := len(eq.nums) - 1
 	numProductCombinations := 1 << numPlaces
 	for attempt := range numProductCombinations {
-		result := int64(-1)
+		result := -1
 		for place := range numPlaces {
 			currBit := (attempt >> place) & 1
 			if currBit == 0 {
 				if result == -1 {
-					result = int64(eq.nums[place]) + int64(eq.nums[place+1])
+					result = eq.nums[place] + eq.nums[place+1]
 				} else {
-					result += int64(eq.nums[place+1])
+					result += eq.nums[place+1]
 				}
 			} else {
 				if result == -1 {
-					result = int64(eq.nums[place]) * int64(eq.nums[place+1])
+					result = eq.nums[place] * eq.nums[place+1]
 				} else {
-					result *= int64(eq.nums[place+1])
+					result *= eq.nums[place+1]
 				}
 			}
 		}
@@ -97,8 +97,8 @@ func isPossiblePt1(eq equation) bool {
 	return false
 }
 
-func part1(eqs []equation) int64 {
-	result := int64(0)
+func part1(eqs []equation) int {
+	result := int(0)
 	for _, eq := range eqs {
 		if isPossiblePt1(eq) {
 			result += eq.testValue
@@ -123,15 +123,13 @@ func intPow(n, m int) int {
 	return result
 }
 
-func concatInt64(a, b int64) int64 {
-	strA := strconv.FormatInt(a, 10)
-	strB := strconv.FormatInt(b, 10)
+func concatint(a, b int) int {
+	strA := strconv.Itoa(a)
+	strB := strconv.Itoa(b)
 	concatStr := strA + strB
-	result, err := strconv.ParseInt(concatStr, 10, 64)
+	result, err := strconv.Atoi(concatStr)
 	if err != nil {
-		// Handle error, e.g., log or return a default value
-		fmt.Println("Error converting concatenated string to int64:", err)
-		return 0
+		panic(err)
 	}
 	return result
 }
@@ -140,26 +138,26 @@ func isPossiblePt2(eq equation) bool {
 	numPlaces := len(eq.nums) - 1
 	numProductCombinations := intPow(3, numPlaces)
 	for attempt := range numProductCombinations {
-		result := int64(-1)
+		result := int(-1)
 		for place := range numPlaces {
 			currBit := (attempt / intPow(3, place)) % 3
 			if currBit == 0 {
 				if result == -1 {
-					result = int64(eq.nums[place]) + int64(eq.nums[place+1])
+					result = int(eq.nums[place]) + int(eq.nums[place+1])
 				} else {
-					result += int64(eq.nums[place+1])
+					result += int(eq.nums[place+1])
 				}
 			} else if currBit == 1 {
 				if result == -1 {
-					result = int64(eq.nums[place]) * int64(eq.nums[place+1])
+					result = int(eq.nums[place]) * int(eq.nums[place+1])
 				} else {
-					result *= int64(eq.nums[place+1])
+					result *= int(eq.nums[place+1])
 				}
 			} else {
 				if result == -1 {
-					result = concatInt64(int64(eq.nums[place]), int64(eq.nums[place+1]))
+					result = concatint(int(eq.nums[place]), int(eq.nums[place+1]))
 				} else {
-					result = concatInt64(result, int64(eq.nums[place+1]))
+					result = concatint(result, int(eq.nums[place+1]))
 				}
 			}
 		}
@@ -170,8 +168,8 @@ func isPossiblePt2(eq equation) bool {
 	return false
 }
 
-func part2(eqs []equation) int64 {
-	result := int64(0)
+func part2(eqs []equation) int {
+	result := int(0)
 	for _, eq := range eqs {
 		if isPossiblePt2(eq) {
 			result += eq.testValue
